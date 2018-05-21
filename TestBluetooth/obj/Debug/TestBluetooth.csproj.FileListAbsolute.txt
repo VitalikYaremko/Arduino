@@ -1,0 +1,7 @@
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\bin\Debug\TestBluetooth.exe.config
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\bin\Debug\TestBluetooth.exe
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\bin\Debug\TestBluetooth.pdb
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\obj\Debug\TestBluetooth.csproj.CoreCompileInputs.cache
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\obj\Debug\TestBluetooth.exe
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\obj\Debug\TestBluetooth.pdb
+C:\Users\Vitalik\source\repos\ConsoleApp1\TestBluetooth\obj\Debug\TestBluetooth.csprojResolveAssemblyReference.cache
