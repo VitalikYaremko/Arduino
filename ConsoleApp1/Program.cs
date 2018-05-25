@@ -5,7 +5,6 @@ using System.Threading;
 using System.Collections.Generic;
 using MouseEvents;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace test
 {
@@ -35,11 +34,7 @@ namespace test
         static int SoffsetX = 0, SoffsetY = 0;
         static bool Left = false, Right = false;
         static bool Up = false, Down = false;
-        static bool StopMove = false;
-        static bool btnClick = false;
 
-        static int StmX = 0, StmY = 0;
-        static int StmX_Spos = 0, StmY_Spos = 0;
         static String[] point;
 
         static int xxx = 0;
@@ -47,12 +42,20 @@ namespace test
 
         static int btn_res = 0, btn_1 = 0, btn_2 = 0, btn_3 = 0;
         static int bufX = 0, bufY = 0;
- 
+
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
         static string S = null;
-     //   static SerialPort port = new SerialPort("COM11", 9600);
         static SerialPort port;
         [DllImport("user32.dll")]
         static extern bool SetCursorPos(int xPos, int yPos);
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
 
         static Int32 xmax, ymax;
         static List<int> numbersX = new List<int>();
@@ -60,6 +63,12 @@ namespace test
  
         static void Main(string[] args)
         {
+            var handle = GetConsoleWindow();
+            // Hide
+            ShowWindow(handle, SW_HIDE);
+            // Show
+            //ShowWindow(handle, SW_SHOW);
+
             try
             {
                 String NumberPortDefault =  System.IO.File.ReadAllText(@"config.txt").Replace("\n", " ");
@@ -133,7 +142,6 @@ namespace test
 
         public static void ReadPort()
         {
-            // Console.WriteLine("StartRead");
             Task ButtonTask = new Task(BtnController);
             try
             {
@@ -144,24 +152,21 @@ namespace test
                 {
                     BX = Convert.ToInt32(point[0]);
                     BY = Convert.ToInt32(point[1]);
-                    btn_res = Convert.ToInt32(point[2]);// 1 12 123
+                    btn_res = Convert.ToInt32(point[2]);
                 }
                 
                 ButtonTask.Start();
                 
                 if (BX != bufX)
                 {
-                    Console.WriteLine("X={0}",StmX);
-                    numbersX.Add(BX + SoffsetX + StmX);//edit
+                    numbersX.Add(BX + SoffsetX );
                 }
                 if (BY != bufY)
                 {
-                    Console.WriteLine("         Y={0}",StmY);
-                    numbersY.Add(BY + SoffsetY + StmY);//edit
+                    numbersY.Add(BY + SoffsetY );
                 }
                 bufX = BX;  
                 bufY = BY;
-              //  Console.WriteLine("EndRead");
                  
             }
             catch (Exception e)
@@ -189,8 +194,6 @@ namespace test
         }
         public static void Processing()
         {
-           // Console.WriteLine("StartProcessing");
-            
             try
             {
                 if (numbersX.Count > 5)
@@ -279,10 +282,7 @@ namespace test
                         }
                     }
 
-                    if(StopMove != true)
-                    {
-                        SetCursorPos(xxx, yyy );
-                    }
+                    SetCursorPos(xxx, yyy );
                 }
             }
             catch (Exception ex)
@@ -329,23 +329,13 @@ namespace test
             XeY = GY * (val - ZpY) + XpY;
             return (XeY);
         }
-        public static void StopMoveFix()
-        {
-                StmX = StmX_Spos - numbersX[numbersX.Count - 1];
-                StmY = StmY_Spos - numbersY[numbersY.Count - 1];
 
-                Console.WriteLine("Stop");
-        }
-
-        static bool clickLeft = false, clickRight = false, Set_StartPos = false;
+        static bool clickLeft = false, clickRight = false;
         public static void BtnController()
         {
-             Task MoveStop = new Task(StopMoveFix);
-           // Thread MoveStop = new Thread(StopMoveFix);
             switch (btn_res)
             {
                 case 0:
-                   // Console.WriteLine("case 0 ");
                     if (clickLeft == true)
                     {
                         MEvents.Up(MButtons.LEFT);
@@ -356,16 +346,8 @@ namespace test
                     }
                     clickLeft = false;
                     clickRight = false;
-
-                    Set_StartPos = false;
-
-                    if (StopMove is true)
-                    {
-                        StopMove = false;
-                        MoveStop.Start();
-                    }
                     break;
-                case 5://1
+                case 1:
                     Console.WriteLine("case 1 ");
 
                     if (clickLeft is false)
@@ -383,17 +365,7 @@ namespace test
                         clickRight = true;
                     }
                     break;
-                case 1:
-                    if (Set_StartPos == false)
-                    {
-                        StmX_Spos = numbersX[numbersX.Count - 1];
-                        StmY_Spos = numbersY[numbersY.Count - 1];
-                        Set_StartPos = true;
-                    }
-                    StopMove = true;
-                    break;
             }
-            //  Console.WriteLine("BtnControllerEnd");
         }
     }
 }
